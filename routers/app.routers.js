@@ -5,9 +5,6 @@ const auth = require('../middlewares/auth');
 const authControllers = require('../controllers/auth.controllers');
 const twilio = require('twilio')
 const router = express.Router();
-const { generateArray } = require('../utils/index');
-const Contenedor = require("../contenedor");
-const mensajes = new Contenedor('./mensajes.txt')
 const productsSchema = require('../models/schemas/Product.schema')
 const MongoDBContainer = require('../models/containers/Mongodb.container');
 const productsContainer = new MongoDBContainer('productos', productsSchema)
@@ -36,8 +33,7 @@ const transporter = nodemailer.createTransport({
 router.get('/', async (req, res) => {
   const user = await req.user;
   if (user) {
-    const arrayMensajes = await mensajes.getAll()
-    const arrayProd = await generateArray(5)
+
     res.redirect('/profile')
   }
   else {
@@ -118,9 +114,8 @@ router.get('/profile', auth, async (req, res) => {
   const userDireccion = await req.user.direccion;
   const userEdad = await req.user.edad;
   const userFoto = await req.user.foto;
-  const arrayMensajes = await mensajes.getAll()
-  const arrayProd = await generateArray(5)
-  return res.render('profile', { userEmail, userFoto, userPhone, userNombre, userDireccion, userEdad, arrayMensajes, arrayProd })
+
+  return res.render('profile', { userEmail, userFoto, userPhone, userNombre, userDireccion, userEdad })
 });
 
 router.get('/logout', auth, (req, res, next) => {
